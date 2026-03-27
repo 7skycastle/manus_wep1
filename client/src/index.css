@@ -43,7 +43,7 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
+  --primary: var(--color-blue-600);
   --primary-foreground: var(--color-blue-50);
   --sidebar-primary: var(--color-blue-600);
   --sidebar-primary-foreground: var(--color-blue-50);
@@ -119,6 +119,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Noto Sans KR', serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
