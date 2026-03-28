@@ -4,11 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, Share2, Heart, Copy, Check } from "lucide-react";
 import { quotes, categories } from "@/data/quotes";
+import { mediaQuotes, mediaSections } from "@/data/media-quotes";
 import { toast } from "sonner";
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<"habits" | "media">("habits");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedMediaSection, setSelectedMediaSection] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [likedQuotes, setLikedQuotes] = useState<Set<number>>(new Set());
 
@@ -23,6 +26,17 @@ export default function Home() {
     });
   }, [searchQuery, selectedCategory]);
 
+  // Filter media quotes based on search and section
+  const filteredMediaQuotes = useMemo(() => {
+    return mediaQuotes.filter((quote) => {
+      const matchesSearch =
+        quote.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        quote.source.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSection = !selectedMediaSection || quote.section === selectedMediaSection;
+      return matchesSearch && matchesSection;
+    });
+  }, [searchQuery, selectedMediaSection]);
+
   const handleCopy = (text: string, id: number) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
@@ -34,7 +48,7 @@ export default function Home() {
     const text = `"${quote}" - ${author}`;
     if (navigator.share) {
       navigator.share({
-        title: "습관 명언",
+        title: "수험생 응원 명언",
         text: text,
       });
     } else {
@@ -59,143 +73,312 @@ export default function Home() {
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-              습관 명언 100선
+              수험생 응원 명언 모음
             </h1>
             <p className="text-gray-600 text-lg">
-              고3 수험생과 재수생을 위한 동기부여 플랫폼
+              고3 수험생과 재수생을 위한 동기부여 플랫폼 (명언 400개)
             </p>
           </div>
         </div>
       </header>
 
+      {/* Tab Navigation */}
+      <div className="sticky top-[100px] z-30 bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto flex gap-2 py-4">
+            <Button
+              onClick={() => {
+                setActiveTab("habits");
+                setSelectedCategory(null);
+                setSearchQuery("");
+              }}
+              variant={activeTab === "habits" ? "default" : "outline"}
+              className="flex-1"
+            >
+              📖 습관 명언 100선
+            </Button>
+            <Button
+              onClick={() => {
+                setActiveTab("media");
+                setSelectedMediaSection(null);
+                setSearchQuery("");
+              }}
+              variant={activeTab === "media" ? "default" : "outline"}
+              className="flex-1"
+            >
+              🎬 영화·드라마·책 300선
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          {/* Search Bar */}
-          <div className="mb-8">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                type="text"
-                placeholder="명언이나 저자를 검색해보세요..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 py-3 text-base border-2 border-gray-200 focus:border-blue-500 rounded-lg"
-              />
-            </div>
-          </div>
-
-          {/* Category Filter */}
-          <div className="mb-10">
-            <h2 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
-              카테고리 선택
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-              <Button
-                onClick={() => setSelectedCategory(null)}
-                variant={selectedCategory === null ? "default" : "outline"}
-                className="text-sm h-auto py-2 px-3 transition-all"
-              >
-                전체
-              </Button>
-              {categories.map((cat) => (
-                <Button
-                  key={cat.key}
-                  onClick={() => setSelectedCategory(cat.key)}
-                  variant={selectedCategory === cat.key ? "default" : "outline"}
-                  className="text-sm h-auto py-2 px-3 transition-all"
-                  title={cat.label}
-                >
-                  <span className="mr-1">{cat.icon}</span>
-                  <span className="hidden sm:inline">{cat.label.split(" ")[0]}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Results Info */}
-          <div className="mb-6 text-sm text-gray-600">
-            총 <span className="font-semibold text-blue-600">{filteredQuotes.length}</span>개의 명언이 있습니다.
-          </div>
-
-          {/* Quotes Grid */}
-          <div className="space-y-4">
-            {filteredQuotes.length > 0 ? (
-              filteredQuotes.map((quote) => (
-                <Card
-                  key={quote.id}
-                  className="p-6 border-l-4 border-l-blue-500 hover:shadow-lg transition-all duration-300 bg-white"
-                >
-                  <div className="flex flex-col gap-4">
-                    {/* Quote Text */}
-                    <blockquote className="text-lg font-medium text-gray-800 leading-relaxed">
-                      "{quote.text}"
-                    </blockquote>
-
-                    {/* Author */}
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600 italic">— {quote.author}</p>
-                      <span className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-                        {quote.categoryKo}
-                      </span>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 pt-2 border-t border-gray-100">
-                      <Button
-                        onClick={() => handleCopy(quote.text, quote.id)}
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-                      >
-                        {copiedId === quote.id ? (
-                          <>
-                            <Check className="w-4 h-4 mr-2" />
-                            복사됨
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-4 h-4 mr-2" />
-                            복사
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        onClick={() => handleShare(quote.text, quote.author)}
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1 text-gray-600 hover:text-green-600 hover:bg-green-50"
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        공유
-                      </Button>
-                      <Button
-                        onClick={() => toggleLike(quote.id)}
-                        variant="ghost"
-                        size="sm"
-                        className={`flex-1 ${
-                          likedQuotes.has(quote.id)
-                            ? "text-red-600 bg-red-50"
-                            : "text-gray-600 hover:text-red-600 hover:bg-red-50"
-                        }`}
-                      >
-                        <Heart
-                          className="w-4 h-4 mr-2"
-                          fill={likedQuotes.has(quote.id) ? "currentColor" : "none"}
-                        />
-                        {likedQuotes.has(quote.id) ? "찜됨" : "찜"}
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">검색 결과가 없습니다.</p>
-                <p className="text-gray-400 text-sm mt-2">다른 검색어나 카테고리를 시도해보세요.</p>
+          {activeTab === "habits" ? (
+            <>
+              {/* Habits Tab */}
+              {/* Search Bar */}
+              <div className="mb-8">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    type="text"
+                    placeholder="명언이나 저자를 검색해보세요..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 py-3 text-base border-2 border-gray-200 focus:border-blue-500 rounded-lg"
+                  />
+                </div>
               </div>
-            )}
-          </div>
+
+              {/* Category Filter */}
+              <div className="mb-10">
+                <h2 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+                  카테고리 선택
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                  <Button
+                    onClick={() => setSelectedCategory(null)}
+                    variant={selectedCategory === null ? "default" : "outline"}
+                    className="text-sm h-auto py-2 px-3 transition-all"
+                  >
+                    전체
+                  </Button>
+                  {categories.map((cat) => (
+                    <Button
+                      key={cat.key}
+                      onClick={() => setSelectedCategory(cat.key)}
+                      variant={selectedCategory === cat.key ? "default" : "outline"}
+                      className="text-sm h-auto py-2 px-3 transition-all"
+                      title={cat.label}
+                    >
+                      <span className="mr-1">{cat.icon}</span>
+                      <span className="hidden sm:inline text-xs">{cat.label.split(" ")[0]}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Results Info */}
+              <div className="mb-6 text-sm text-gray-600">
+                총 <span className="font-semibold text-blue-600">{filteredQuotes.length}</span>개의 명언이 있습니다.
+              </div>
+
+              {/* Quotes Grid */}
+              <div className="space-y-4">
+                {filteredQuotes.length > 0 ? (
+                  filteredQuotes.map((quote) => (
+                    <Card
+                      key={quote.id}
+                      className="p-6 border-l-4 border-l-blue-500 hover:shadow-lg transition-all duration-300 bg-white"
+                    >
+                      <div className="flex flex-col gap-4">
+                        {/* Quote Text */}
+                        <blockquote className="text-lg font-medium text-gray-800 leading-relaxed">
+                          "{quote.text}"
+                        </blockquote>
+
+                        {/* Author */}
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-600 italic">— {quote.author}</p>
+                          <span className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                            {quote.categoryKo}
+                          </span>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-2 border-t border-gray-100">
+                          <Button
+                            onClick={() => handleCopy(quote.text, quote.id)}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                          >
+                            {copiedId === quote.id ? (
+                              <>
+                                <Check className="w-4 h-4 mr-2" />
+                                복사됨
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4 mr-2" />
+                                복사
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => handleShare(quote.text, quote.author)}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 text-gray-600 hover:text-green-600 hover:bg-green-50"
+                          >
+                            <Share2 className="w-4 h-4 mr-2" />
+                            공유
+                          </Button>
+                          <Button
+                            onClick={() => toggleLike(quote.id)}
+                            variant="ghost"
+                            size="sm"
+                            className={`flex-1 ${
+                              likedQuotes.has(quote.id)
+                                ? "text-red-600 bg-red-50"
+                                : "text-gray-600 hover:text-red-600 hover:bg-red-50"
+                            }`}
+                          >
+                            <Heart
+                              className="w-4 h-4 mr-2"
+                              fill={likedQuotes.has(quote.id) ? "currentColor" : "none"}
+                            />
+                            {likedQuotes.has(quote.id) ? "찜됨" : "찜"}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">검색 결과가 없습니다.</p>
+                    <p className="text-gray-400 text-sm mt-2">다른 검색어나 카테고리를 시도해보세요.</p>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Media Quotes Tab */}
+              {/* Search Bar */}
+              <div className="mb-8">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    type="text"
+                    placeholder="문장이나 출처를 검색해보세요..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 py-3 text-base border-2 border-gray-200 focus:border-purple-500 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              {/* Section Filter */}
+              <div className="mb-10">
+                <h2 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+                  섹션 선택
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                  <Button
+                    onClick={() => setSelectedMediaSection(null)}
+                    variant={selectedMediaSection === null ? "default" : "outline"}
+                    className="text-sm h-auto py-2 px-3 transition-all"
+                  >
+                    전체
+                  </Button>
+                  {mediaSections.map((section) => (
+                    <Button
+                      key={section.key}
+                      onClick={() => setSelectedMediaSection(section.key)}
+                      variant={selectedMediaSection === section.key ? "default" : "outline"}
+                      className="text-sm h-auto py-2 px-3 transition-all"
+                      title={section.label}
+                    >
+                      <span className="mr-1">{section.icon}</span>
+                      <span className="hidden sm:inline text-xs">{section.label.split(" ")[0]}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Results Info */}
+              <div className="mb-6 text-sm text-gray-600">
+                총 <span className="font-semibold text-purple-600">{filteredMediaQuotes.length}</span>개의 문장이 있습니다.
+              </div>
+
+              {/* Media Quotes Grid */}
+              <div className="space-y-4">
+                {filteredMediaQuotes.length > 0 ? (
+                  filteredMediaQuotes.map((quote) => (
+                    <Card
+                      key={quote.id}
+                      className="p-6 border-l-4 border-l-purple-500 hover:shadow-lg transition-all duration-300 bg-white"
+                    >
+                      <div className="flex flex-col gap-4">
+                        {/* Quote Text */}
+                        <blockquote className="text-lg font-medium text-gray-800 leading-relaxed">
+                          "{quote.text}"
+                        </blockquote>
+
+                        {/* Source */}
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded font-medium">
+                              {quote.sourceType === "movie" ? "🎬 영화" : quote.sourceType === "drama" ? "🎭 드라마" : "📖 책"}
+                            </span>
+                            <p className="text-sm text-gray-600 italic">{quote.source}</p>
+                          </div>
+                          <span className="text-xs px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                            {quote.sectionKo}
+                          </span>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-2 border-t border-gray-100">
+                          <Button
+                            onClick={() => handleCopy(quote.text, quote.id)}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                          >
+                            {copiedId === quote.id ? (
+                              <>
+                                <Check className="w-4 h-4 mr-2" />
+                                복사됨
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4 mr-2" />
+                                복사
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => handleShare(quote.text, quote.source)}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 text-gray-600 hover:text-green-600 hover:bg-green-50"
+                          >
+                            <Share2 className="w-4 h-4 mr-2" />
+                            공유
+                          </Button>
+                          <Button
+                            onClick={() => toggleLike(quote.id)}
+                            variant="ghost"
+                            size="sm"
+                            className={`flex-1 ${
+                              likedQuotes.has(quote.id)
+                                ? "text-red-600 bg-red-50"
+                                : "text-gray-600 hover:text-red-600 hover:bg-red-50"
+                            }`}
+                          >
+                            <Heart
+                              className="w-4 h-4 mr-2"
+                              fill={likedQuotes.has(quote.id) ? "currentColor" : "none"}
+                            />
+                            {likedQuotes.has(quote.id) ? "찜됨" : "찜"}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">검색 결과가 없습니다.</p>
+                    <p className="text-gray-400 text-sm mt-2">다른 검색어나 섹션을 시도해보세요.</p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </main>
 
@@ -207,7 +390,7 @@ export default function Home() {
               💡 매일 한 가지 명언을 선택하고 실천해보세요. 작은 습관이 모여 큰 변화를 만듭니다.
             </p>
             <p className="text-xs text-gray-500">
-              © 2026 습관 명언 100선 | 수험생 여러분을 응원합니다
+              © 2026 수험생 응원 명언 모음 (명언 400개) | 고3·재수생 여러분을 응원합니다
             </p>
           </div>
         </div>
