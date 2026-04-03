@@ -21,10 +21,10 @@ export default function Home() {
 
   const types = useMemo(() => {
     return [
-      { id: "foreign-movie", label: "🌍 해외 영화" },
-      { id: "foreign-author", label: "🌍 해외 명사" },
-      { id: "korean-movie", label: "🇰🇷 국내 영화" },
-      { id: "korean-author", label: "🇰🇷 국내 명사" },
+      { id: "foreign-movie", label: "해외 영화" },
+      { id: "foreign-author", label: "해외 명사" },
+      { id: "korean-movie", label: "국내 영화" },
+      { id: "korean-author", label: "국내 명사" },
     ];
   }, []);
 
@@ -111,12 +111,13 @@ export default function Home() {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-0.5">
             {/* Type Filter */}
             <Button
               variant={selectedType === null ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedType(null)}
+              className="text-xs px-2 py-1 h-8"
             >
               전체 ({quotes1000.length})
             </Button>
@@ -126,6 +127,7 @@ export default function Home() {
                 variant={selectedType === type.id ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedType(type.id as any)}
+                className="text-xs px-2 py-1 h-8"
               >
                 {type.label} (
                 {quotes1000.filter((q) => q.type === type.id).length})
@@ -137,6 +139,7 @@ export default function Home() {
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
+                className="text-xs px-2 py-1 h-8"
               >
                 {category}
               </Button>
