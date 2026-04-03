@@ -82,37 +82,32 @@ export default function Home() {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100">
         <div className="container py-3">
-          <h1 className="text-2xl font-bold text-center mb-3 text-blue-900">
-            수험생 응원 명언 1000선
-          </h1>
-
-          {/* Tabs */}
-          <div className="flex gap-4 justify-center mb-3">
+          {/* Tabs and Search in one line */}
+          <div className="flex gap-3 items-center mb-3">
             <Button
               variant={activeTab === "all" ? "default" : "outline"}
               onClick={() => setActiveTab("all")}
-              className="gap-2"
+              className="gap-2 flex-shrink-0"
             >
               📚 전체 명언
             </Button>
             <Button
               variant={activeTab === "liked" ? "default" : "outline"}
               onClick={() => setActiveTab("liked")}
-              className="gap-2"
+              className="gap-2 flex-shrink-0"
             >
               ❤️ 내 명언 ({likedQuotes.size})
             </Button>
-          </div>
-
-          {/* Search */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-            <Input
-              placeholder="명언 검색 (텍스트, 저자, 출처)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 py-2 border-blue-200 focus:border-blue-500"
-            />
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <Input
+                placeholder="명언 검색 (텍스트, 저자, 출처)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 py-2 border-blue-200 focus:border-blue-500"
+              />
+            </div>
           </div>
 
           {/* Filters */}
