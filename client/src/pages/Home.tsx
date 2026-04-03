@@ -81,16 +81,13 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100">
-        <div className="container py-6">
-          <h1 className="text-4xl font-bold text-center mb-2 text-blue-900">
+        <div className="container py-3">
+          <h1 className="text-2xl font-bold text-center mb-3 text-blue-900">
             수험생 응원 명언 1000선
           </h1>
-          <p className="text-center text-gray-600 mb-6">
-            대학생 수준의 성숙한 명언으로 당신의 꿈을 응원합니다
-          </p>
 
           {/* Tabs */}
-          <div className="flex gap-4 justify-center mb-6">
+          <div className="flex gap-4 justify-center mb-3">
             <Button
               variant={activeTab === "all" ? "default" : "outline"}
               onClick={() => setActiveTab("all")}
@@ -108,7 +105,7 @@ export default function Home() {
           </div>
 
           {/* Search */}
-          <div className="relative mb-6">
+          <div className="relative mb-3">
             <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <Input
               placeholder="명언 검색 (텍스트, 저자, 출처)..."
@@ -119,11 +116,11 @@ export default function Home() {
           </div>
 
           {/* Filters */}
-          <div className="space-y-4">
+          <div className="space-y-2">
             {/* Type Filter */}
             <div>
-              <p className="text-sm font-semibold text-gray-700 mb-2">출처별 필터</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-xs font-semibold text-gray-700 mb-1">출처별 필터</p>
+              <div className="flex flex-wrap gap-1">
                 <Button
                   variant={selectedType === null ? "default" : "outline"}
                   size="sm"
@@ -147,8 +144,8 @@ export default function Home() {
 
             {/* Category Filter */}
             <div>
-              <p className="text-sm font-semibold text-gray-700 mb-2">카테고리별 필터</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-xs font-semibold text-gray-700 mb-1">카테고리별 필터</p>
+              <div className="flex flex-wrap gap-1">
                 <Button
                   variant={selectedCategory === null ? "default" : "outline"}
                   size="sm"
