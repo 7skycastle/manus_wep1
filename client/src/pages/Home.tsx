@@ -21,10 +21,10 @@ export default function Home() {
 
   const types = useMemo(() => {
     return [
-      { id: "foreign-movie", label: "🌍 해외 영화·드라마" },
-      { id: "foreign-author", label: "🌍 해외 명사 명언" },
-      { id: "korean-movie", label: "🇰🇷 국내 영화·드라마" },
-      { id: "korean-author", label: "🇰🇷 국내 명사 명언" },
+      { id: "foreign-movie", label: "🌍 해외 영화" },
+      { id: "foreign-author", label: "🌍 해외 명사" },
+      { id: "korean-movie", label: "🇰🇷 국내 영화" },
+      { id: "korean-author", label: "🇰🇷 국내 명사" },
     ];
   }, []);
 
@@ -161,17 +161,17 @@ export default function Home() {
               return (
                 <Card
                   key={idx}
-                  className="p-6 hover:shadow-lg transition-all duration-300 border-blue-100 hover:border-blue-300 bg-white/50 backdrop-blur-sm"
+                  className="p-3 hover:shadow-lg transition-all duration-300 border-blue-100 hover:border-blue-300 bg-white/50 backdrop-blur-sm flex flex-col"
                 >
                   {/* Quote Text */}
-                  <p className="text-lg font-semibold text-gray-800 mb-4 leading-relaxed">
+                  <p className="text-sm font-semibold text-gray-800 mb-2 leading-relaxed flex-1">
                     "{quote.text}"
                   </p>
 
-                  {/* Source */}
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-600">
-                      <span className="inline-block mr-2">
+                  {/* Source and Category in one line */}
+                  <div className="flex items-center justify-between mb-2 gap-2">
+                    <p className="text-xs text-gray-600">
+                      <span className="inline-block mr-1">
                         {quote.type === "foreign-movie" && "🎬"}
                         {quote.type === "foreign-author" && "✍️"}
                         {quote.type === "korean-movie" && "🎭"}
@@ -179,17 +179,13 @@ export default function Home() {
                       </span>
                       {quote.source}
                     </p>
-                  </div>
-
-                  {/* Category Badge */}
-                  <div className="mb-4">
-                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                    <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full flex-shrink-0">
                       {quote.category}
                     </span>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Button
                       variant="ghost"
                       size="sm"
