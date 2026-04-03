@@ -116,55 +116,36 @@ export default function Home() {
           </div>
 
           {/* Filters */}
-          <div className="space-y-2">
+          <div className="flex flex-wrap gap-1">
             {/* Type Filter */}
-            <div>
-              <p className="text-xs font-semibold text-gray-700 mb-1">출처별 필터</p>
-              <div className="flex flex-wrap gap-1">
-                <Button
-                  variant={selectedType === null ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedType(null)}
-                >
-                  전체 ({quotes1000.length})
-                </Button>
-                {types.map((type) => (
-                  <Button
-                    key={type.id}
-                    variant={selectedType === type.id ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedType(type.id as any)}
-                  >
-                    {type.label} (
-                    {quotes1000.filter((q) => q.type === type.id).length})
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Category Filter */}
-            <div>
-              <p className="text-xs font-semibold text-gray-700 mb-1">카테고리별 필터</p>
-              <div className="flex flex-wrap gap-1">
-                <Button
-                  variant={selectedCategory === null ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(null)}
-                >
-                  전체
-                </Button>
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <Button
+              variant={selectedType === null ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedType(null)}
+            >
+              전체 ({quotes1000.length})
+            </Button>
+            {types.map((type) => (
+              <Button
+                key={type.id}
+                variant={selectedType === type.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedType(type.id as any)}
+              >
+                {type.label} (
+                {quotes1000.filter((q) => q.type === type.id).length})
+              </Button>
+            ))}
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Button>
+            ))}
           </div>
         </div>
       </div>
