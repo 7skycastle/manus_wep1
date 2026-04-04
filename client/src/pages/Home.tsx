@@ -167,7 +167,7 @@ export default function Home() {
                   className="p-3 hover:shadow-lg transition-all duration-300 border-blue-100 hover:border-blue-300 bg-white/50 backdrop-blur-sm flex flex-col"
                 >
                   {/* Quote Text */}
-                  <p className="text-sm font-semibold text-gray-800 mb-2 leading-relaxed flex-1">
+                  <p className="text-2xl font-semibold mb-4 text-gray-900 leading-relaxed">
                     "{quote.text}"
                   </p>
 
