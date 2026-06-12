@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Search, Share2, Heart, Copy, Check } from "lucide-react";
+import { Search, Share2, Heart, Copy, Check, Download } from "lucide-react";
 import { quotes1000 } from "@/data/quotes-1000";
 import { toast } from "sonner";
 
@@ -77,6 +77,118 @@ export default function Home() {
     setLikedQuotes(newLiked);
   };
 
+  const downloadAsHTML = () => {
+    const htmlContent = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수험생 응원 명언 1000선</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 50%, #f0f4ff 100%);
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1e40af;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .quote-card {
+            background: white;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .quote-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #93c5fd;
+        }
+        .quote-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #1f2937;
+        }
+        .quote-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .quote-source {
+            font-size: 12px;
+            color: #666;
+        }
+        .quote-category {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            color: #666;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>수험생 응원 명언 1000선</h1>
+        <div class="quote-grid">
+${quotes1000.map(quote => `            <div class="quote-card">
+                <p class="quote-text">"${quote.text}"</p>
+                <div class="quote-meta">
+                    <span class="quote-source">${quote.source}</span>
+                    <span class="quote-category">${quote.category}</span>
+                </div>
+            </div>`).join('\n')}
+        </div>
+        <div class="footer">
+            <p>총 ${quotes1000.length}개의 명언 | 고3 수험생과 재수생을 위한 응원 메시지</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = '수험생_응원_명언_1000선.html';
+    link.click();
+    URL.revokeObjectURL(link.href);
+    toast.success('HTML 파일이 다운로드되었습니다!');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Header */}
@@ -97,6 +209,13 @@ export default function Home() {
               className="gap-2 flex-shrink-0"
             >
               ❤️ 내 명언 ({likedQuotes.size})
+            </Button>
+            <Button
+              variant="outline"
+              onClick={downloadAsHTML}
+              className="gap-2 flex-shrink-0"
+            >
+              <Download className="w-4 h-4" /> HTML 다운로드
             </Button>
             {/* Search */}
             <div className="relative flex-1">
